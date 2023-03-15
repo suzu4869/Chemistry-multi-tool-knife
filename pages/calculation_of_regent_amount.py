@@ -26,6 +26,6 @@ if all(names) and loading_amount and unit_of_amount:
     M_l = calculate_molar_mass(loaded_formation)
     M_s = calculate_molar_mass(support)
     if unit_of_amount == "wt%":
-        st.write(f"{regent} of {loading_amount/100 * M_regent/M_l} mg/g_support")
+        st.write(f"{regent} of {loading_amount/100 * M_regent/M_l} g/g_support")
     else:
-        st.write(f"{regent} of {loading_amount/100 * M_regent/M_s} mg/g_support")
+        st.write(f"{regent} of {loading_amount/100 * M_regent/M_s} g/g_support")
