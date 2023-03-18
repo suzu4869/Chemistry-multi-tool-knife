@@ -60,6 +60,63 @@ def change_time_to_seconds(time_str):
     seconds = int(m[3])
     return hours * 3600 + minutes * 60 + seconds
 
+def ppm_to_mol_L(state, ppm, molar_mass=None, temperature=None, pressure=None):
+    """
+    Convert parts per million (ppm) to molar concentration (mol/L).
+    
+    Parameters:
+        state (str): 'gas' or 'liquid' indicating whether the substance is a gas or a liquid.
+        molar_mass (float): The molar mass of the substance in g/mol.
+        ppm (float): The concentration of the substance in parts per million (ppm).
+        temperature (float): The temperature in Kelvin.
+        pressure (float, optional): The pressure in Pascals (Pa). Required for gas phase, ignored for liquid phase.
+        
+    Returns:
+        float: The molar concentration in mol/L.
+    """
+    
+    # Adjust for gas phase
+    if state == 'gas':
+        vol_frac = ppm / 10**6
+        # Convert pressure to atm
+        atm = pressure / 101325
+        # Apply ideal gas law
+        molar_conc = vol_frac * atm / (0.082057 * temperature)
+    if state == 'liquid':
+        # Convert ppm to g / L
+        mass_conc = ppm / 10**3
+        # Convert mass concentration to molar concentration
+        molar_conc = mass_conc / molar_mass
+    
+    return molar_conc
+
+def conversion_rate(moles, volume, partial_pressure):
+    """
+    Calculates the conversion rate given the moles of reactant consumed, the volume of the system,
+    the partial pressure of the reactant, and the total pressure of the system.
+    
+    Parameters
+    ----------
+    moles : float
+        The number of moles of reactant consumed.
+    volume : float
+        The volume of the system in liters.
+    partial_pressure : float
+        The partial pressure of the reactant in atmospheres (atm).
+        
+    Returns
+    -------
+    float
+        The conversion rate, expressed as a percentage.
+    """
+    # Calculate the initial number of moles of reactant present in the system
+    initial_moles = (partial_pressure * volume) / (0.082057 * 298.15)
+    
+    # Calculate the conversion rate as a percentage
+    conversion_rate = moles / initial_moles
+    
+    return conversion_rate
+
 if __name__ == "__main__":
     ir_data_path = r"G:\共有ドライブ\CatEC\DATA\Takuya Suguro\Data\data\microwave_ammonia_synthesis\raw\exp1040\IR\exp1040 IR-5.csv"
     tmp_df = pd.read_csv(ir_data_path, header=20, names=["Wavenumber", "Absorbance"])
